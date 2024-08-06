@@ -37,9 +37,8 @@ def draw_graph_route():
     
     labels = {i: chr(65 + i) for i in range(num_vertices)}
     
-    pos = nx.circular_layout(G)  # Fixed circular layout
-    
     plt.figure(figsize=(6, 6))
+    pos = nx.circular_layout(G)
     nx.draw(G, pos, labels=labels, with_labels=True, node_color='skyblue', node_size=700, edge_color='gray', font_color='black')
     
     buf = io.BytesIO()
@@ -73,9 +72,9 @@ def find_chromatic_index():
 
         colors = ['red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'orange', 'purple', 'pink', 'brown']
 
-        pos = nx.circular_layout(G)  # Fixed circular layout
+        pos = nx.circular_layout(G)
 
-        def draw_graph(G, vertex_coloring, color_mapping, num_vertices):
+        def draw_graph(G, vertex_coloring, color_mapping, num_vertices, pos):
             labels = {i: chr(65 + i) for i in range(num_vertices)}
             plt.figure(figsize=(6, 6))
             node_colors = [color_mapping[vertex_coloring[node]] for node in G.nodes()]
@@ -91,7 +90,7 @@ def find_chromatic_index():
         graphs = []
         for color_mapping in color_combinations:
             color_mapping_dict = {i: color for i, color in enumerate(color_mapping)}
-            graph_url = draw_graph(G, vertex_coloring, color_mapping_dict, num_vertices)
+            graph_url = draw_graph(G, vertex_coloring, color_mapping_dict, num_vertices, pos)
             graphs.append(graph_url)
 
         return render_template('chromatic_index.html', chromatic_index=chromatic_index, graphs=graphs)
@@ -100,15 +99,12 @@ def find_chromatic_index():
         print(f"Error: {e}")
         return str(e)
 
-
 @app.route('/manual_color', methods=['GET'])
 def manual_color():
     num_vertices = int(request.args['num_vertices'])
     matrix = [[int(request.args[f'cell_{i}_{j}']) for j in range(num_vertices)] for i in range(num_vertices)]
     return render_template('manual_color.html', num_vertices=num_vertices, matrix=matrix)
 
-
-from math import ceil
 
 @app.route('/manual_color_process', methods=['POST'])
 def manual_color_process():
@@ -124,9 +120,9 @@ def manual_color_process():
         vertex_coloring = welsh_powell_vertex_coloring(G)
         colors = ['red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'orange', 'purple', 'pink', 'brown']
 
-        pos = nx.circular_layout(G)  # Fixed circular layout
+        pos = nx.circular_layout(G)
 
-        def draw_graph(G, vertex_coloring, color_mapping, num_vertices):
+        def draw_graph(G, vertex_coloring, color_mapping, num_vertices, pos):
             labels = {i: chr(65 + i) for i in range(num_vertices)}
             plt.figure(figsize=(6, 6))
             node_colors = [color_mapping[vertex_coloring[node]] for node in G.nodes()]
@@ -137,32 +133,23 @@ def manual_color_process():
             plt.close()  # Close the plot to free up memory
             return base64.b64encode(buf.getvalue()).decode('utf8')
 
-        # Limit the number of permutations displayed
-        max_permutations = 10  # Adjust as needed
-        color_combinations = list(itertools.permutations(colors[:num_colors], num_vertices))[:max_permutations]
+        color_combinations = []
+        for i in range(0, num_colors - num_vertices + 1):
+            start_idx = i
+            end_idx = start_idx + num_vertices
+            color_combinations.extend(itertools.permutations(colors[start_idx:end_idx]))
 
         graphs = []
         for color_mapping in color_combinations:
             color_mapping_dict = {i: color for i, color in enumerate(color_mapping)}
-            graph_url = draw_graph(G, vertex_coloring, color_mapping_dict, num_vertices)
+            graph_url = draw_graph(G, vertex_coloring, color_mapping_dict, num_vertices, pos)
             graphs.append(graph_url)
 
-        # Pagination logic
-        page = int(request.args.get('page', 1))
-        per_page = 5  # Number of graphs per page
-        total_pages = ceil(len(graphs) / per_page)
-        start_idx = (page - 1) * per_page
-        end_idx = start_idx + per_page
-
-        # Slice graphs to display for the current page
-        current_page_graphs = graphs[start_idx:end_idx]
-
-        return render_template('manual_color_result.html', graphs=current_page_graphs, num_vertices=num_vertices, num_colors=num_colors, page=page, total_pages=total_pages)
+        return render_template('manual_color_result.html', graphs=graphs)
 
     except Exception as e:
         print(f"Error: {e}")
         return str(e)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
