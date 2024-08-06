@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Color Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .graph-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto;
+            max-width: 600px;
+            position: relative;
+        }
+        .graph-container img {
+            max-width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .button-container button:disabled {
+            background-color: #aaa;
+        }
+        .graph-info {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 16px;
+            color: #000000;
+        }
+        .solution-info {
+            text-align: center;
+            font-size: 20px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manual Color Result</h1>
+    <div class="solution-info">
+        Solution: <span id="solutionNumber">1</span>
+    </div>
+    <div class="graph-container">
+        {% for graph in graphs %}
+            <img class="graph" src="data:image/png;base64,{{ graph }}" alt="Graph" style="display: none;">
+        {% endfor %}
+        <img class="graph" src="data:image/png;base64,{{ graphs[0] }}" alt="Graph">
+    </div>
+    <div class="graph-info">
+        Total possible solutions: {{ graphs|length +1}}
+    </div>
+    <div class="button-container">
+        <button id="prevButton" onclick="prevGraph()" disabled>Previous</button>
+        <button id="nextButton" onclick="nextGraph()">Next</button>
+    </div>
+    <script>
+        let currentGraph = 0;
+        const graphs = document.querySelectorAll('.graph');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const graphNumber = document.getElementById('solutionNumber');
+
+        function updateGraph() {
+            graphs.forEach((graph, index) => {
+                graph.style.display = index === currentGraph ? 'block' : 'none';
+            });
+            graphNumber.textContent = currentGraph + 1;
+            prevButton.disabled = currentGraph === 0;
+            nextButton.disabled = currentGraph === graphs.length - 1;
+        }
+
+        function nextGraph() {
+            if (currentGraph < graphs.length - 1) {
+                currentGraph++;
+                updateGraph();
+            }
+        }
+
+        function prevGraph() {
+            if (currentGraph > 0) {
+                currentGraph--;
+                updateGraph();
+            }
+        }
+    </script>
+</body>
+</html>

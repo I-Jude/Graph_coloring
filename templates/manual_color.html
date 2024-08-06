@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Color Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .color-input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .color-input-container label {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .color-input-container input {
+            width: 60px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        .color-input-container button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .color-input-container button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manual Color Input</h1>
+    <div class="color-input-container">
+        <form action="{{ url_for('manual_color_process') }}" method="POST">
+            <input type="hidden" name="num_vertices" value="{{ num_vertices }}">
+            {% for i in range(num_vertices) %}
+                {% for j in range(num_vertices) %}
+                    <input type="hidden" name="cell_{{ i }}_{{ j }}" value="{{ matrix[i][j] }}">
+                {% endfor %}
+            {% endfor %}
+            <label for="num_colors">Enter the number of colors:</label>
+            <input type="number" id="num_colors" name="num_colors" min="1" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

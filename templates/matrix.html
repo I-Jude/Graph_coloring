@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Input</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-size: 18px;
+            text-align: center;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Enter Adjacency Matrix</h1>
+        <form name="matrixForm" action="{{ url_for('draw_graph_route') }}" method="POST">
+            <input type="hidden" name="num_vertices" value="{{ num_vertices }}">
+            <table>
+                {% for i in range(num_vertices) %}
+                    <tr>
+                        {% for j in range(num_vertices) %}
+                            <td>
+                                <input type="text" name="cell_{{ i }}_{{ j }}" size="1" value="0"
+                                {% if i == j %}readonly{% endif %}>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+            <input type="submit" value="Draw Graph">
+        </form>
+    </div>
+</body>
+</html>

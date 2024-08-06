@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .graph-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .graph-container img {
+            max-width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .actions form {
+            display: inline-block;
+            margin: 0 10px;
+        }
+        .actions label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .actions input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        .actions button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .actions button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Graph Representation</h1>
+    <div class="graph-container">
+        <img src="data:image/png;base64,{{ graph_url }}" alt="Graph">
+    </div>
+    <div class="actions">
+        <form action="{{ url_for('find_chromatic_index') }}" method="POST">
+            <input type="hidden" name="num_vertices" value="{{ num_vertices }}">
+            {% for i in range(num_vertices) %}
+                {% for j in range(num_vertices) %}
+                    <input type="hidden" name="cell_{{ i }}_{{ j }}" value="{{ matrix[i][j] }}">
+                {% endfor %}
+            {% endfor %}
+            <button type="submit">Find Chromatic Number</button>
+        </form>
+        <form action="{{ url_for('manual_color') }}" method="GET">
+            <input type="hidden" name="num_vertices" value="{{ num_vertices }}">
+            {% for i in range(num_vertices) %}
+                {% for j in range(num_vertices) %}
+                    <input type="hidden" name="cell_{{ i }}_{{ j }}" value="{{ matrix[i][j] }}">
+                {% endfor %}
+            {% endfor %}
+            <button type="submit">Manual Color</button>
+        </form>
+    </div>
+</body>
+</html>

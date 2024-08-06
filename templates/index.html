@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Input</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Graph Input</h1>
+        <form action="{{ url_for('get_matrix') }}" method="POST">
+            <label for="num_vertices">Number of vertices:</label>
+            <input type="number" id="num_vertices" name="num_vertices" min="1" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
